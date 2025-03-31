@@ -10,13 +10,10 @@ app = FastAPI(title="LocalPhoto API")
 # IMPORTANT: In production, replace "*" with the specific origins of your frontend
 # e.g., origins = ["http://localhost:8080", "https://yourdomain.com"]
 origins = [
-    "*" # Allow all origins for development
-    # Add specific origins here for production, e.g.:
-    # "http://localhost",
-    # "http://localhost:8080", # If you serve frontend via a dev server
-    # "http://127.0.0.1",
-    # "http://127.0.0.1:8080",
-    # "null" # Often needed for file:// origin during local development
+    "http://localhost:8080",    # Allow the frontend dev server
+    "http://127.0.0.1:8080",  # Allow the frontend dev server via IP
+    # Add other origins like your production frontend URL later
+    # "https://yourdomain.com"
 ]
 
 app.add_middleware(

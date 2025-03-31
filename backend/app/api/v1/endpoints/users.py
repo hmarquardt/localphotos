@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlmodel import Session
+from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload # Import selectinload
 from typing import Any, List # Import List
 
 from app.db.session import get_db
@@ -53,12 +54,24 @@ def update_user_me(
 
 @router.get("/me/submissions", response_model=List[ImageSubmissionRead])
 def read_user_me_submissions(
+    db: Session = Depends(get_db), # Add db session dependency
     current_user: User = Depends(get_current_active_user),
-    # db: Session = Depends(get_db) # DB session might not be needed if relationship is loaded
 ) -> Any:
     """
     Get submissions for the current user.
     """
     # SQLModel/SQLAlchemy relationship loading should make submissions available
     # Ensure relationship loading is configured correctly if issues arise (e.g., selectinload)
-    return current_user.submissions
+    # Explicitly fetch the user with their submissions to ensure they are loaded
+    statement = (
+        select(User)
+        .where(User.id == current_user.id)
+        .options(selectinload(User.submissions)) # Eagerly load submissions
+    )
+    user_with_submissions = db.exec(statement).first()
+
+    if not user_with_submissions:
+         # Should not happen if current_user exists, but good practice
+         raise HTTPException(status_code=404, detail="User not found")
+
+    return user_with_submissions.submissions

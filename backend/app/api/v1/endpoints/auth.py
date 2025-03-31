@@ -84,7 +84,7 @@ async def login_via_google(request: Request):
     return await oauth.google.authorize_redirect(request, redirect_uri, state=state)
 
 
-@router.get("/google/callback", response_model=Token)
+@router.get("/google/callback") # Removed response_model=Token
 async def google_auth_callback(request: Request, db: Session = Depends(get_db)):
     """
     Handle the callback from Google after user authorization.
@@ -157,8 +157,11 @@ async def google_auth_callback(request: Request, db: Session = Depends(get_db)):
         data={"sub": user.email} # Use email as subject
     )
 
-    # Return the token (frontend will handle storage and redirection)
-    return {"access_token": access_token, "token_type": "bearer"}
+    # Construct the redirect URL with the token in the fragment
+    redirect_url = f"{settings.FRONTEND_URL}#token={access_token}"
+
+    # Redirect the user back to the frontend
+    return RedirectResponse(url=redirect_url)
 
 # Note: Need to add Starlette SessionMiddleware to the main FastAPI app
 # for request.session to work for state management.

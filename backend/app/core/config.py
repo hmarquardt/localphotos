@@ -15,9 +15,13 @@ class Settings(BaseSettings):
     GOOGLE_CLIENT_SECRET: str
     GOOGLE_REDIRECT_URI: str = "http://localhost:8000/api/v1/auth/google/callback" # Default for local dev
     SESSION_SECRET_KEY: str = "a_very_secret_key_change_this_in_production" # Add a default or load from .env
+    FRONTEND_URL: str = "http://localhost:8080" # Default frontend URL for redirects
 
-    # Add other settings like AWS keys later
-    # AWS_ACCESS_KEY_ID: str = ""
+    # AWS S3 Settings (loaded from .env)
+    AWS_ACCESS_KEY_ID: str
+    AWS_SECRET_ACCESS_KEY: str
+    S3_BUCKET_NAME: str
+    AWS_REGION: str
     # AWS_SECRET_ACCESS_KEY: str = ""
     # S3_BUCKET_NAME: str = ""
 

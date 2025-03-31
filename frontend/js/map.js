@@ -146,34 +146,6 @@ function initMapView() {
         });
     });
 
-    // --- Add event listener for Set Home button ---
-    const setHomeBtn = document.getElementById('set-home-btn');
-    if (setHomeBtn) {
-        setHomeBtn.addEventListener('click', async () => {
-            const center = map.getCenter();
-            const homeLocationWKT = `SRID=4326;POINT(${center.lng} ${center.lat})`;
-            console.log("Setting home location:", homeLocationWKT);
-
-            try {
-                await axios.put(`${API_BASE_URL}/users/me`, { home_location: homeLocationWKT }, {
-                    headers: { Authorization: `Bearer ${localStorage.getItem('accessToken')}` }
-                });
-                displayMapMessage("Home location updated successfully!", 'success'); // Use helper function
-                // Optionally disable button temporarily or show other feedback
-            } catch (error) {
-                console.error("Failed to set home location:", error);
-                let message = "Failed to update home location.";
-                if (error.response && error.response.data && error.response.data.detail) {
-                    message = `Error: ${error.response.data.detail}`;
-                } else if (error.response && error.response.status === 401) {
-                    message = "Authentication failed. Please log in again.";
-                }
-                displayMapMessage(message, 'danger'); // Use helper function
-            }
-        });
-    } else {
-        console.warn("Set home button not found.");
-    }
 }
 
 // Function to fetch submissions and display markers
@@ -212,7 +184,9 @@ async function fetchAndDisplayMarkers(latitude, longitude, radiusKm = 5.0) {
         submissions.forEach(sub => {
             // GeoAlchemy returns WKT: "SRID=4326;POINT(lon lat)"
             // We need to parse lat/lon from this string
-            const pointMatch = sub.location.match(/POINT\(([-\d.]+) ([-\d.]+)\)/);
+            // Use the 'location_wkt' field provided by the backend response model
+            // Corrected regex: Removed extra escaped parenthesis after POINT
+            const pointMatch = sub.location_wkt.match(/POINT \(([-\d.]+) ([-\d.]+)\)/);
             if (pointMatch && pointMatch.length === 3) {
                 const lon = parseFloat(pointMatch[1]);
                 const lat = parseFloat(pointMatch[2]);
@@ -239,7 +213,7 @@ async function fetchAndDisplayMarkers(latitude, longitude, radiusKm = 5.0) {
                 marker.bindPopup(popupContent);
                 markersLayer.addLayer(marker);
             } else {
-                console.warn("Could not parse location WKT:", sub.location);
+                console.warn("Could not parse location WKT:", sub.location_wkt);
             }
         });
 

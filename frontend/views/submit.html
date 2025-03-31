@@ -1,0 +1,48 @@
+<div class="container mt-3">
+    <h2>Submit a New Photo</h2>
+    <form id="submit-form" enctype="multipart/form-data">
+        <!-- Image Input Options -->
+        <div class="mb-3">
+            <label for="image-file" class="form-label">Select Photo or Use Camera:</label>
+            <div class="input-group">
+                <input type="file" class="form-control" id="image-file" name="file" accept="image/*"> <!-- Removed required attribute -->
+                <button class="btn btn-outline-secondary" type="button" id="use-camera-btn">Use Camera</button>
+            </div>
+            <div class="form-text">Please select a file or use the camera.</div>
+        </div>
+
+        <!-- Camera View (Hidden by default) -->
+        <div id="camera-view" class="mb-3" style="display: none;">
+            <video id="camera-video" width="100%" autoplay playsinline></video>
+            <button type="button" class="btn btn-success mt-2" id="capture-btn">Capture Photo</button>
+            <button type="button" class="btn btn-danger mt-2 ms-2" id="cancel-camera-btn">Cancel Camera</button>
+            <canvas id="camera-canvas" style="display: none;"></canvas> <!-- Hidden canvas for processing -->
+        </div>
+
+        <!-- Image Preview (Optional) -->
+        <div class="mb-3">
+             <img id="image-preview" src="#" alt="Image preview" style="display: none; max-width: 100%; height: auto; margin-top: 10px;"/>
+        </div>
+
+        <!-- Description -->
+        <div class="mb-3">
+            <label for="description" class="form-label">Description:</label>
+            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+        </div>
+
+        <!-- Location (Hidden fields populated by JS) -->
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+
+        <!-- Location Status -->
+        <div id="location-status" class="mb-3 text-muted">
+            Fetching location...
+        </div>
+
+        <!-- Error/Success Message Area -->
+        <div id="submit-message" class="alert" style="display: none;" role="alert"></div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary" id="submit-btn" disabled>Submit</button>
+    </form>
+</div>

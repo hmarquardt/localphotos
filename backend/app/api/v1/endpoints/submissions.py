@@ -1,6 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
 from sqlmodel import Session
 from typing import Optional, Any, List # Import List
+import boto3
+import uuid
+from botocore.exceptions import ClientError # Import ClientError for boto3 exceptions
 
 from app.db.session import get_db
 from app.models.user import User
@@ -9,6 +12,7 @@ from app.crud import crud_image_submission
 # Assuming a dependency function exists to get the current user
 # from app.api.deps import get_current_active_user
 from app.models.user import User # Temporary: Replace with actual dependency import
+from app.core.config import settings # Import settings for AWS credentials
 
 # Placeholder for the dependency - replace with actual implementation
 async def get_current_active_user(db: Session = Depends(get_db)) -> User:
@@ -41,13 +45,41 @@ async def create_submission(
     if not image.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Uploaded file must be an image.")
 
-    # --- Placeholder for S3 Upload Logic ---
-    # 1. Generate a unique filename (e.g., using uuid)
-    # 2. Upload image.file content to S3 using boto3
-    # 3. Get the resulting S3 URL
-    # Example: image_url = await upload_to_s3(image.file, image.filename)
-    image_url = f"https://s3.example.com/placeholder/{image.filename}" # Placeholder
-    # --- End Placeholder ---
+    # --- S3 Upload Logic ---
+    s3_client = boto3.client(
+        's3',
+        aws_access_key_id=settings.AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=settings.AWS_SECRET_ACCESS_KEY,
+        region_name=settings.AWS_REGION
+    )
+    bucket_name = settings.S3_BUCKET_NAME
+
+    # Generate a unique filename using UUID and preserve original extension
+    file_extension = image.filename.split('.')[-1] if '.' in image.filename else 'jpg' # Default to jpg if no extension
+    unique_filename = f"{uuid.uuid4()}.{file_extension}"
+    object_key = f"submissions/{unique_filename}" # Store in a 'submissions' folder in the bucket
+
+    try:
+        s3_client.upload_fileobj(
+            image.file,       # The file-like object from UploadFile
+            bucket_name,      # Bucket name
+            object_key,       # Key (path/filename) in the bucket
+            ExtraArgs={'ContentType': image.content_type} # Set content type for proper browser handling
+        )
+        # Construct the URL (consider using CloudFront in production for better performance/security)
+        image_url = f"https://{bucket_name}.s3.{settings.AWS_REGION}.amazonaws.com/{object_key}"
+        print(f"Successfully uploaded {object_key} to {bucket_name}. URL: {image_url}")
+
+    except ClientError as e:
+        print(f"S3 Upload Error: {e}") # Log the error
+        raise HTTPException(status_code=500, detail="Failed to upload image to storage.")
+    except Exception as e: # Catch other potential errors during upload
+        print(f"Unexpected error during S3 upload: {e}")
+        raise HTTPException(status_code=500, detail="An unexpected error occurred during image upload.")
+    finally:
+        # Ensure the file cursor is closed, though FastAPI might handle this
+        await image.close()
+    # --- End S3 Upload Logic ---
 
     submission_in = ImageSubmissionCreate(
         description=description,

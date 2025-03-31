@@ -1,7 +1,7 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-geoalchemy2
+geoalchemy2[shapely]
 psycopg2-binary
 alembic
 python-dotenv
@@ -12,3 +12,5 @@ pydantic-settings
 python-multipart
 Authlib
 itsdangerous
+boto3
+httpx

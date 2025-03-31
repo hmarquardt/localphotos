@@ -75,8 +75,25 @@ function updateLoginStatus() {
 // Initial load and hash change listener
 window.addEventListener('hashchange', () => loadView(window.location.hash));
 window.addEventListener('load', () => {
+    const hash = window.location.hash;
+    let token = null;
+
+    // Check if the hash contains a token from OAuth redirect
+    if (hash.startsWith('#token=')) {
+        token = hash.substring(7); // Extract token after '#token='
+        localStorage.setItem('accessToken', token);
+        console.log("OAuth token stored from URL fragment.");
+
+        // Clean the hash and redirect to map view
+        window.history.replaceState(null, null, ' '); // Removes the hash from URL without reload
+        window.location.hash = '#map'; // Set hash to map for loading the view
+    }
+
+    // Now load the view based on the potentially cleaned hash
     loadView(window.location.hash || '#map'); // Load default view or current hash
-    updateLoginStatus(); // Check login status on load
+
+    // Update login status (will use token from localStorage if set)
+    updateLoginStatus();
 });
 
 // Logout function (called from nav link)
