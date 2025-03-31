@@ -1,0 +1,23 @@
+<h2>Register</h2>
+<form id="register-form">
+    <div class="mb-3">
+        <label for="register-email" class="form-label">Email address</label>
+        <input type="email" class="form-control" id="register-email" name="email" required aria-describedby="emailHelp">
+        <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+    </div>
+    <div class="mb-3">
+        <label for="register-password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="register-password" name="password" required>
+    </div>
+    <!-- Add password confirmation if desired -->
+    <!-- <div class="mb-3">
+        <label for="register-password-confirm" class="form-label">Confirm Password</label>
+        <input type="password" class="form-control" id="register-password-confirm" name="password_confirm" required>
+    </div> -->
+    <div id="register-error" class="alert alert-danger mt-3" style="display: none;" role="alert">
+        <!-- Error messages will be displayed here -->
+    </div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+<p class="mt-3">Already have an account? <a href="#login">Login here</a></p>
+<!-- Note: Changed the onclick to a simple href="#login" which the router handles -->

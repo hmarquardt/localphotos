@@ -1,5 +1,7 @@
 const appContent = document.getElementById('app-content');
 const logoutLink = document.getElementById('logout-link');
+const profileLink = document.getElementById('profile-link'); // Get profile link element
+const submitLink = document.getElementById('submit-link'); // Get submit link element
 
 // Simple hash-based router
 async function loadView(viewName) {
@@ -38,6 +40,14 @@ async function loadView(viewName) {
         // Execute view-specific initialization if needed
         if (viewName === 'login' && typeof initLoginView === 'function') {
             initLoginView();
+        } else if (viewName === 'register' && typeof initRegisterView === 'function') {
+            initRegisterView();
+        } else if (viewName === 'submit' && typeof initSubmitView === 'function') {
+            initSubmitView();
+        } else if (viewName === 'map' && typeof initMapView === 'function') {
+            initMapView();
+        } else if (viewName === 'profile' && typeof initProfileView === 'function') {
+            initProfileView();
         }
         // Add other view initializations here (e.g., initMapView, initSubmitView)
 
@@ -52,9 +62,13 @@ function updateLoginStatus() {
     const token = localStorage.getItem('accessToken');
     if (token) {
         logoutLink.style.display = 'block';
+        profileLink.style.display = 'block'; // Show profile link
+        submitLink.style.display = 'block'; // Show submit link
         // Potentially hide login/register links if desired
     } else {
         logoutLink.style.display = 'none';
+        profileLink.style.display = 'none'; // Hide profile link
+        submitLink.style.display = 'none'; // Hide submit link
     }
 }
 

@@ -1,0 +1,28 @@
+<div class="container mt-3">
+    <h2 class="mb-3">Nearby Photos</h2>
+
+    <!-- Map Container -->
+    <div id="map" style="height: 500px; width: 100%; border: 1px solid #ccc;">
+        <!-- Leaflet map will be initialized here -->
+        <p class="text-center pt-5">Loading map...</p>
+    </div>
+
+    <!-- Optional: Add controls like radius slider later -->
+    <div class="row mt-3 align-items-center">
+        <div class="col-auto">
+            <label for="radius-slider" class="form-label">Search Radius (km):</label>
+        </div>
+        <div class="col"> <!-- Moved button into a column for better alignment -->
+             <button id="set-home-btn" class="btn btn-sm btn-outline-primary">Set Current View as Home</button>
+        </div>
+        <div class="col">
+            <input type="range" class="form-range" min="1" max="50" step="1" value="5" id="radius-slider">
+        </div>
+        <div class="col-auto">
+            <span id="radius-value">5 km</span>
+        </div>
+    </div>
+    <!-- Message area for map actions -->
+    <div id="map-message" class="alert mt-2" style="display: none;" role="alert"></div>
+    <div id="map-error" class="alert alert-danger mt-3" style="display: none;" role="alert"></div>
+</div>

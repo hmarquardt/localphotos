@@ -1,0 +1,57 @@
+<div class="container mt-3">
+    <h2>My Profile</h2>
+
+    <div id="profile-error" class="alert alert-danger" style="display: none;"></div>
+    <div id="profile-success" class="alert alert-success" style="display: none;"></div>
+
+    <!-- Display User Info -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Current Information</h5>
+            <p><strong>Email:</strong> <span id="profile-email">Loading...</span></p>
+            <p><strong>Avatar URL:</strong> <span id="profile-avatar-url">None</span></p>
+            <!-- Display Home Location and Radius later if needed -->
+        </div>
+    </div>
+
+    <!-- Update Profile Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <h5 class="card-title">Update Profile</h5>
+            <form id="profile-update-form">
+                <div class="mb-3">
+                    <label for="avatar-url" class="form-label">Avatar URL</label>
+                    <input type="url" class="form-control" id="avatar-url" name="avatar_url" placeholder="https://example.com/avatar.jpg">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Home Location (Optional)</label>
+                    <div class="input-group">
+                        <span class="input-group-text">Lat</span>
+                        <input type="number" step="any" class="form-control" id="home-latitude" name="home_latitude" placeholder="e.g., 37.7749">
+                        <span class="input-group-text">Lon</span>
+                        <input type="number" step="any" class="form-control" id="home-longitude" name="home_longitude" placeholder="e.g., -122.4194">
+                    </div>
+                    <small class="form-text text-muted">Set your default map center.</small>
+                     <button type="button" id="set-home-location-current" class="btn btn-sm btn-outline-secondary mt-1">Use Current Location</button>
+                </div>
+                <div class="mb-3">
+                    <label for="default-radius" class="form-label">Default Search Radius (km)</label>
+                    <input type="number" min="1" max="100" step="1" class="form-control" id="default-radius" name="default_radius_km" placeholder="e.g., 5">
+                </div>
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- User Submissions (Implement Later) -->
+    <div class="card">
+        <div class="card-body">
+            <h5 class="card-title">My Submissions</h5>
+            <div id="profile-submissions-list">
+                <p>Your submitted photos will appear here.</p>
+                <!-- List will be populated dynamically -->
+            </div>
+        </div>
+    </div>
+
+</div>

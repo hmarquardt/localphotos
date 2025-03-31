@@ -33,11 +33,12 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('hashed_password', sqlmodel.sql.sqltypes.AutoString(), nullable=False),
     sa.Column('google_id', sqlmodel.sql.sqltypes.AutoString(), nullable=True),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    if_not_exists=True # Add check
     )
-    op.create_index('idx_user_home_location', 'user', ['home_location'], unique=False, postgresql_using='gist')
-    op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True)
-    op.create_index(op.f('ix_user_google_id'), 'user', ['google_id'], unique=True)
+    op.create_index('idx_user_home_location', 'user', ['home_location'], unique=False, postgresql_using='gist', if_not_exists=True)
+    op.create_index(op.f('ix_user_email'), 'user', ['email'], unique=True, if_not_exists=True)
+    op.create_index(op.f('ix_user_google_id'), 'user', ['google_id'], unique=True, if_not_exists=True)
     op.create_table('imagesubmission',
     sa.Column('description', sqlmodel.sql.sqltypes.AutoString(length=256), nullable=True),
     sa.Column('location', geoalchemy2.types.Geometry(geometry_type='POINT', srid=4326, from_text='ST_GeomFromEWKT', name='geometry'), nullable=True),
@@ -50,10 +51,11 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    if_not_exists=True # Add check
     )
-    op.create_index('idx_imagesubmission_location', 'imagesubmission', ['location'], unique=False, postgresql_using='gist')
-    op.create_index(op.f('ix_imagesubmission_user_id'), 'imagesubmission', ['user_id'], unique=False)
+    op.create_index('idx_imagesubmission_location', 'imagesubmission', ['location'], unique=False, postgresql_using='gist', if_not_exists=True)
+    op.create_index(op.f('ix_imagesubmission_user_id'), 'imagesubmission', ['user_id'], unique=False, if_not_exists=True)
     # ### end Alembic commands ###
 
 
